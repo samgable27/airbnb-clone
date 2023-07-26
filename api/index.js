@@ -72,6 +72,10 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.post("/logout", async (req, res) => {
+  res.clearCookie("token").json("ok");
+});
+
 app.get("/profile", (req, res) => {
   const { token } = req.cookies;
   if (token) {
