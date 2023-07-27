@@ -6,6 +6,7 @@ const User = require("./models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const imageDownloader = require("image-downloader");
 
 require("dotenv").config();
 
@@ -19,6 +20,8 @@ app.use(
     origin: "http://localhost:5173",
   })
 );
+
+app.use("/uploads", express.static(__dirname + "/uploads"));
 
 mongoose.connect(process.env.MONGO_URL);
 
@@ -88,6 +91,18 @@ app.get("/profile", (req, res) => {
   } else {
     res.json(null);
   }
+});
+
+app.post("/upload-by-link", async (req, res) => {
+  const { link } = req.body;
+  const newName = Date.now() + ".jpg";
+
+  await imageDownloader.image({
+    url: link,
+    dest: __dirname + "/uploads/" + newName,
+  });
+
+  res.json(newName);
 });
 
 app.listen(4000);
