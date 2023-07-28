@@ -13,7 +13,12 @@ const Perks = ({ selected, onChange }) => {
   return (
     <div className="grid gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6 mt-2">
       <label className="border p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" name="wifi" onChange={handleCbClick} />
+        <input
+          type="checkbox"
+          checked={selected?.includes("wifi")}
+          name="wifi"
+          onChange={handleCbClick}
+        />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-6 w-6"
@@ -31,7 +36,12 @@ const Perks = ({ selected, onChange }) => {
         <span className="font-lato font-regular">Wifi</span>
       </label>
       <label className="border p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" name="parking" onChange={handleCbClick} />
+        <input
+          type="checkbox"
+          checked={selected?.includes("parking")}
+          name="parking"
+          onChange={handleCbClick}
+        />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-6 w-6"
@@ -50,7 +60,12 @@ const Perks = ({ selected, onChange }) => {
         <span className="font-lato font-regular">Free parking</span>
       </label>
       <label className="border p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" name="tv" onChange={handleCbClick} />
+        <input
+          type="checkbox"
+          checked={selected?.includes("tv")}
+          name="tv"
+          onChange={handleCbClick}
+        />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-6 w-6"
@@ -68,7 +83,12 @@ const Perks = ({ selected, onChange }) => {
         <span className="font-lato font-regular">TV</span>
       </label>
       <label className="border p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" name="pets" onChange={handleCbClick} />
+        <input
+          type="checkbox"
+          checked={selected?.includes("pets")}
+          name="pets"
+          onChange={handleCbClick}
+        />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-6 w-6"
@@ -86,7 +106,12 @@ const Perks = ({ selected, onChange }) => {
         <span className="font-lato font-regular">Pets allowed</span>
       </label>
       <label className="border p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" name="enter" onChange={handleCbClick} />
+        <input
+          type="checkbox"
+          checked={selected?.includes("enter")}
+          name="enter"
+          onChange={handleCbClick}
+        />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-6 w-6"
@@ -104,7 +129,12 @@ const Perks = ({ selected, onChange }) => {
         <span className="font-lato font-regular">Private entrance</span>
       </label>
       <label className="border p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
-        <input type="checkbox" name="ac" onChange={handleCbClick} />
+        <input
+          type="checkbox"
+          checked={selected?.includes("ac")}
+          name="ac"
+          onChange={handleCbClick}
+        />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-6 w-6"

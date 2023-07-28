@@ -1,14 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import AccountNav from "../components/AccountNav";
+import axios from "axios";
 
 const Places = () => {
+  const [places, setplaces] = useState([]);
+  useEffect(() => {
+    axios.get("/places").then(({ data }) => {
+      setplaces(data);
+    });
+  }, []);
+
   return (
     <div>
       <AccountNav />
       <div className="text-center">
-        List of all added places
-        <br />
         <Link
           className="inline-flex gap-1 font-lato font-regular bg-primary text-white py-2 px-6 rounded-full"
           to={"/account/places/new"}
@@ -27,6 +33,27 @@ const Places = () => {
           </svg>
           Add new place
         </Link>
+      </div>
+      <div className="mt-4">
+        {places.length > 0 &&
+          places.map((place, i) => (
+            <Link
+              to={"/account/places/" + place._id}
+              className="bg-gray-100 p-2 rounded-2xl flex gap-4 cursor-pointer"
+            >
+              <div key={i} className="w-32 h-32 bg-gray-300 grow shrink-0">
+                {place.photos?.length > 0 && <img src={place.photos[0]} />}
+              </div>
+              <div className="grow-0 shrink">
+                <h2 className="text-xl font-lato font-regular">
+                  {place.title}
+                </h2>
+                <p className="text-sm mt-2 font-lato font-light">
+                  {place.description}
+                </p>
+              </div>
+            </Link>
+          ))}
       </div>
     </div>
   );

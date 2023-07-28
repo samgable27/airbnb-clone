@@ -1,15 +1,18 @@
 import { Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PhotoUploader from "../components/PhotoUploader";
 import axios from "axios";
 import Perks from "../components/Perks";
 import AccountNav from "../components/AccountNav";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
+import { set } from "mongoose";
 
 const PlacesFormPage = () => {
+  const { id } = useParams();
+
   const [title, setTitle] = useState("");
-  const [address, setaddress] = useState("");
+  const [address, setAddress] = useState("");
   const [addPhotos, setAddPhotos] = useState([]);
   const [description, setDescription] = useState("");
   const [perks, setPerks] = useState([]);
@@ -18,6 +21,24 @@ const PlacesFormPage = () => {
   const [checkOut, setCheckOut] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
   const [redirect, setRedirect] = useState(false);
+
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+    axios.get("/places/" + id).then((res) => {
+      const { data } = res;
+      setTitle(data.title);
+      setAddress(data.address);
+      setAddPhotos(data.photos);
+      setDescription(data.description);
+      setPerks(data.perks);
+      setExtraInfo(data.extraInfo);
+      setCheckIn(data.checkIn);
+      setCheckOut(data.checkOut);
+      setMaxGuests(data.maxGuests);
+    });
+  }, [id]);
 
   const inputHeader = (text) => {
     return <h2 className="font-lato font-bold text-2xl mt-4">{text}</h2>;
@@ -36,10 +57,10 @@ const PlacesFormPage = () => {
     );
   };
 
-  const addNewPlace = async (e) => {
+  const savePlace = async (e) => {
     e.preventDefault();
 
-    await axios.post("/places", {
+    const placeData = {
       title,
       address,
       addPhotos,
@@ -49,7 +70,19 @@ const PlacesFormPage = () => {
       checkIn,
       checkOut,
       maxGuests,
-    });
+    };
+
+    if (id) {
+      // update
+      await axios.put("/places", {
+        id,
+        ...placeData,
+      });
+      setRedirect(true);
+    } else {
+      // new place
+      await axios.post("/places", placeData);
+    }
 
     setRedirect(true);
   };
@@ -61,7 +94,7 @@ const PlacesFormPage = () => {
   return (
     <div>
       <AccountNav />
-      <form onSubmit={addNewPlace}>
+      <form onSubmit={savePlace}>
         {preInput("Title", "Title for your place, be creative!")}
         <Input
           value={title}
@@ -72,7 +105,7 @@ const PlacesFormPage = () => {
         {preInput("Address", "Address to your newly created place")}
         <Input
           value={address}
-          onChange={(e) => setaddress(e.target.value)}
+          onChange={(e) => setAddress(e.target.value)}
           className="hover:border-primary"
           placeholder="address"
         />
@@ -82,7 +115,7 @@ const PlacesFormPage = () => {
         <TextArea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="rounded-md"
+          className="rounded-md h-40"
           showCount
           maxLength={100}
         />
