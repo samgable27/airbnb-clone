@@ -117,7 +117,7 @@ const PlacesFormPage = () => {
           onChange={(e) => setDescription(e.target.value)}
           className="rounded-md h-40"
           showCount
-          maxLength={100}
+          maxLength={500}
         />
         {preInput("Perks", "Select all the perks for your place")}
         <Perks selected={perks} onChange={setPerks} />

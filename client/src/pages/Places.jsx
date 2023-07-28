@@ -41,8 +41,13 @@ const Places = () => {
               to={"/account/places/" + place._id}
               className="bg-gray-100 p-2 rounded-2xl flex gap-4 cursor-pointer"
             >
-              <div key={i} className="w-32 h-32 bg-gray-300 grow shrink-0">
-                {place.photos?.length > 0 && <img src={place.photos[0]} />}
+              <div key={i} className="flex w-32 h-32 bg-gray-300 grow shrink-0">
+                {place.photos?.length > 0 && (
+                  <img
+                    className="object-cover"
+                    src={"http://localhost:4000/uploads/" + place.photos[0]}
+                  />
+                )}
               </div>
               <div className="grow-0 shrink">
                 <h2 className="text-xl font-lato font-regular">
