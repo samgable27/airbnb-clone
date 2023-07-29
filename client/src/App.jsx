@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import AccountPage from "./pages/ProfilePage";
 import Places from "./pages/Places";
 import PlacesFormPage from "./pages/PlacesFormPage";
+import PlacePage from "./pages/PlacePage";
 
 axios.defaults.baseURL = "http://localhost:4000";
 axios.defaults.withCredentials = true;
@@ -26,6 +27,7 @@ function App() {
           <Route path="/account/places" element={<Places />} />
           <Route path="/account/places/new" element={<PlacesFormPage />} />
           <Route path="/account/places/:id" element={<PlacesFormPage />} />
+          <Route path="/place/:id" element={<PlacePage />} />
         </Route>
       </Routes>
     </UserContextProvider>
