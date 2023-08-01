@@ -23,6 +23,8 @@ app.use(express.json());
 
 app.use(cookieParser());
 
+app.use("/uploads", express.static(__dirname + "/uploads"));
+
 app.use(
   cors({
     credentials: true,
@@ -67,8 +69,6 @@ const getUserData = (req) => {
     );
   });
 };
-
-app.use("/uploads", express.static(__dirname + "/uploads"));
 
 app.get("/api/test", (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
