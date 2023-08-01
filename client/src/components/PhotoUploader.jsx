@@ -1,6 +1,7 @@
 import { Input } from "antd";
 import axios from "axios";
 import React, { useState } from "react";
+import Image from "./Image";
 
 const PhotoUploader = ({ addPhotos, onChange }) => {
   const [photoLink, setPhotoLink] = useState("");
@@ -70,10 +71,7 @@ const PhotoUploader = ({ addPhotos, onChange }) => {
         {addPhotos?.length > 0 &&
           addPhotos.map((link, i) => (
             <div className="h-32 flex relative" key={i}>
-              <img
-                className="rounded-2xl w-full object-cover"
-                src={"http://localhost:4000/uploads/" + link}
-              />
+              <Image className="rounded-2xl w-full object-cover" src={link} />
               <button
                 onClick={(e) => removePhoto(e, link)}
                 className="cursor-pointer absolute bottom-1 right-2 text-white bg-black bg-opacity-50 p-1 rounded-2xl py-2 px-3 "

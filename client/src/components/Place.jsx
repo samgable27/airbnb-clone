@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "./Image";
 
 const Place = ({ place, index = 0, className = null }) => {
   if (!place.photos?.length) {
@@ -8,12 +9,7 @@ const Place = ({ place, index = 0, className = null }) => {
   if (!className) {
     className = "object-cover rounded-md";
   }
-  return (
-    <img
-      className={className}
-      src={"http://localhost:4000/uploads/" + place.photos[index]}
-    />
-  );
+  return <Image className={className} src={place.photos[index]} />;
 };
 
 export default Place;

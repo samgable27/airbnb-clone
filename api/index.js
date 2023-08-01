@@ -1,5 +1,4 @@
 const express = require("express");
-const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
 const User = require("./models/User");
@@ -8,11 +7,17 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
-const multer = require("multer");
 const fs = require("fs");
+const multer = require("multer");
 const BookingModel = require("./models/Booking");
+const mime = require("mime-types");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 
 require("dotenv").config();
+
+const bucket = "sam-airbnb-clone";
+
+const app = express();
 
 app.use(express.json());
 
@@ -24,6 +29,30 @@ app.use(
     origin: "http://localhost:5173",
   })
 );
+
+const uploadToS3 = async (path, originalFilename, mimetype) => {
+  const client = new S3Client({
+    region: "us-east-2",
+    credentials: {
+      accessKeyId: process.env.S3_ACCESS_KEY,
+      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    },
+  });
+  const parts = originalFilename.split(".");
+  const ext = parts[parts.length - 1];
+  const newFilename = Date.now() + "." + ext;
+
+  await client.send(
+    new PutObjectCommand({
+      Bucket: bucket,
+      Body: fs.readFileSync(path),
+      Key: newFilename,
+      ContentType: mimetype,
+      ACL: "public-read",
+    })
+  );
+  return `https://${bucket}.s3.us-east-2.amazonaws.com/${newFilename}`;
+};
 
 const getUserData = (req) => {
   return new Promise((resolve, reject) => {
@@ -41,9 +70,8 @@ const getUserData = (req) => {
 
 app.use("/uploads", express.static(__dirname + "/uploads"));
 
-mongoose.connect(process.env.MONGO_URL);
-
 app.get("/test", (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   res.json("test ok");
 });
 
@@ -116,30 +144,30 @@ app.get("/profile", (req, res) => {
 
 app.post("/upload-by-link", async (req, res) => {
   const { link } = req.body;
-  const newName = Date.now() + ".jpg";
+  const newName = "photo" + Date.now() + ".jpg";
 
   await imageDownloader.image({
     url: link,
-    dest: __dirname + "/uploads/" + newName,
+    dest: "/tmp/" + newName,
   });
 
-  res.json(newName);
+  const url = await uploadToS3(
+    "/tmp/" + newName,
+    newName,
+    mime.lookup("/tmp/" + newName)
+  );
+  res.json(url);
 });
 
-const photoMiddleWare = multer({
-  dest: "uploads/",
+const photosMiddleware = multer({
+  dest: "/tmp",
 });
-app.post("/upload", photoMiddleWare.array("photos", 100), (req, res) => {
+app.post("/upload", photosMiddleware.array("photos", 100), async (req, res) => {
   const uploadedFiles = [];
   for (let i = 0; i < req.files.length; i++) {
-    const { path, originalname } = req.files[i];
-
-    const parts = originalname.split(".");
-    const ext = parts[parts.length - 1];
-    const newPath = path + "." + ext;
-
-    fs.renameSync(path, newPath);
-    uploadedFiles.push(newPath.replace("uploads", ""));
+    const { path, originalname, mimetype } = req.files[i];
+    const url = await uploadToS3(path, originalname, mimetype);
+    uploadedFiles.push(url);
   }
   res.json(uploadedFiles);
 });
