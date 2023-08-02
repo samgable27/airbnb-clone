@@ -14,10 +14,9 @@ const mime = require("mime-types");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 
 require("dotenv").config();
+const app = express();
 
 const bucket = "sam-airbnb-clone";
-
-const app = express();
 
 app.use(express.json());
 
@@ -53,7 +52,7 @@ const uploadToS3 = async (path, originalFilename, mimetype) => {
       ACL: "public-read",
     })
   );
-  return `https://${bucket}.s3.us-east-2.amazonaws.com/${newFilename}`;
+  return `https://${bucket}.s3.amazonaws.com/${newFilename}`;
 };
 
 const getUserData = (req) => {
